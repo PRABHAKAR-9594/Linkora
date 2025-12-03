@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import CustomVideoPlayer from "@/components/Shared/CustomVideoPlayer";
 import { useAppDispatch } from "@/hooks";
 import { openPostViewModal } from "@/store/slices/postViewModal.slice";
+import CustomVideoPlayer from "@/components/Shared/CustomVideoPlayer";
 
 export interface PostMedia {
   url: string;

@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
-import { api, ProfileURL } from "@/api/config";
+import { api } from "@/lib";
+import { ProfileURL } from "@/api/config";
 import type { EditProfilePayload } from "@/features/settings/validation";
 
 export const ProfileAPI = {

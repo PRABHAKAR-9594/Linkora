@@ -11,24 +11,18 @@ import type {
 import { AuthAPI } from "../api/auth.api";
 import { toast } from "sonner";
 import { handleAxiosError } from "@/utils";
+import type { AxiosError } from "axios";
+import { registerSocket } from "@/lib/socket";
 
-// we can't add useQueryClient here because
-// const qc = useQueryClient();
 export const useAuthLogin = () => {
-  const qc = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: (payload: LoginPayload) => AuthAPI.login(payload),
     onSuccess: (data) => {
-      console.log("data : ", data);
-      if (data?.data?.askLogoutPrevious) {
-        return;
-      }
-      qc.invalidateQueries({ queryKey: ["currentUser"] });
-      navigate("/home");
       toast.success(data?.message || "Logged in successfully!");
+      registerSocket();
+      navigate("/home");
     },
-
     onError: handleAxiosError,
   });
 };
@@ -48,15 +42,27 @@ export const useRegister = () => {
 };
 
 export const useVerifyOtp = () => {
-  const qc = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: (payload: VerifyOtpPayload) => AuthAPI.verifyOtp(payload),
     onSuccess: (data) => {
-      navigate("/home");
       toast.success(data?.message || "OTP verified successfully!");
+      toast.success("Login to continue");
+      navigate("/auth/login");
     },
-    onError: handleAxiosError,
+    onError: (error: AxiosError<any>) => {
+      const status = error.response?.status;
+      if (status === 401 || status === 410) {
+        toast.error(
+          "Your verification time has expired. Please register again."
+        );
+        navigate("/auth/register");
+      } else if (status === 400) {
+        toast.error("Invalid OTP. Please try again.");
+      } else {
+        toast.error("Verification failed. Please try again.");
+      }
+    },
   });
 };
 

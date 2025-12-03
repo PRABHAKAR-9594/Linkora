@@ -3,8 +3,8 @@ import UserPosts from "./UserPosts";
 import FriendsList from "./Friends";
 
 interface ProfileTabsProps {
-  userId: string; // undefined → own profile
-  isOwnProfile: boolean; // passed from ProfilePage
+  userId: string;
+  isOwnProfile: boolean;
 }
 
 const ProfileTabs = ({ userId }: ProfileTabsProps) => {

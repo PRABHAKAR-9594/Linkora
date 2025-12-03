@@ -5,7 +5,7 @@ export const useRightSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const { data: currentUser } = useCurrentUserQuery();
-  const { data } = useUserFriendsQuery(currentUser?.data?._id);
+  const { data } = useUserFriendsQuery(currentUser._id);
   const friends = data?.data || [];
 
   const groups = ["Frances, Lori, ...", "Lawson, Knight"];

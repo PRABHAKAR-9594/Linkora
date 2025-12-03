@@ -3,5 +3,5 @@ export type {
   SavedMediaInDB,
   CloudinaryUploadedMedia,
   UploadResult,
-} from "../../types/media.types";
+} from "./types";
 

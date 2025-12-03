@@ -66,7 +66,7 @@ export default function ScrollStorytelling({ story = defaultStory }) {
 
 
     return (
-        <div className="mt-8 w-full max-w-6xl mx-auto relative px-4 md:px-8 hidden sm:block select-none">
+        <div className="mt-8 w-full max-w-6xl mx-auto relative px-4 md:px-8 hidden xl:block select-none">
             <img
                 src="https://stackbros.in/social/assets/images/elements/07.svg"
                 className="hidden md:block -left-[32rem] top-0 absolute w-[32rem] h-[32rem] blur-[254px] select-none pointer-events-none"
@@ -94,7 +94,6 @@ export default function ScrollStorytelling({ story = defaultStory }) {
                                 className="min-h-[60vh] flex flex-col justify-center"
                             >
                                 <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{scene.headline}</h2>
-                                {/* <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-blue-500">{scene.headline}</h2> */}
                                 <div className="text-base md:text-lg leading-relaxed space-y-2 text-muted-foreground">
                                     <p>{scene.text.t1}</p>
                                     <p>{scene.text.t2}</p>
@@ -104,7 +103,7 @@ export default function ScrollStorytelling({ story = defaultStory }) {
                     })}
                 </div>
 
-                {/* Right: Fixed Media (Hidden on Mobile) */}
+                {/* Right: Fixed Media (hidden for less than large screen) */}
                 <div className="relative">
                     <div className="sticky top-20 lg:top-24">
                         <div className="relative w-full max-h-[500px] flex justify-center items-center">

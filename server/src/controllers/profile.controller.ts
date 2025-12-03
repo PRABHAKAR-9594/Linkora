@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Server } from "socket.io";
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 
 import {
@@ -26,7 +27,7 @@ import { ApiError } from "../utils/apiResponseHandler/apiError";
 export const updateProfile = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.currentUser.id;
-    
+
     const updatedUser = await handleUpdateProfile(req.body, userId);
 
     res
@@ -49,7 +50,9 @@ export const sendFriendRequest = asyncHandler(
     const userId = req.currentUser.id;
     const { friendId } = req.params;
 
-    const message = await handleSendFriendRequest(userId, friendId);
+    const io = req.app.get("io") as Server;
+
+    const message = await handleSendFriendRequest(io, userId, friendId);
 
     res.status(HTTP_STATUS.OK).json(ApiResponse.success(null, message));
   }

@@ -66,7 +66,6 @@ const FriendsList = ({ userId }: FriendsListProps) => {
                 </div>
               </div>
 
-              {/* Hide "Remove" button if viewing other user's profile */}
               <div className="flex gap-2">
                 {!userId && (
                   <Button

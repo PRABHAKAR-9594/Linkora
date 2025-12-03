@@ -49,7 +49,7 @@ const ProfileHeader = ({ user, isOwnProfile }: ProfileHeaderProps) => {
   const bgStyle = getProfileBackground(user?.userName || "default");
 
   const handleDPChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isOwnProfile) return; // ⛔ Block if not own profile
+    if (!isOwnProfile) return;
 
     const file = e.target.files?.[0];
     if (!file) return;

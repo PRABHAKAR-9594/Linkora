@@ -42,7 +42,7 @@ export const handleGetPostsByUser = async (
 
   if (cursor) {
     if (!mongoose.Types.ObjectId.isValid(cursor)) {
-      throw ApiError.BadRequest("Invalid cursor value");
+      throw ApiError.BadRequest(POST_MESSAGES.INVALID_CURSOR);
     }
     query._id = { $lt: new mongoose.Types.ObjectId(cursor) };
   }
@@ -99,7 +99,7 @@ export const handleLike = async (id: string, postId: string) => {
   const post = await Post.findById(postId);
   const isPostOwner = post?.userId.toString() === id;
   if (isPostOwner) {
-    throw ApiError.BadRequest("You can't like your own post.");
+    throw ApiError.BadRequest(POST_MESSAGES.OWN_POST);
   }
   const isLiked = post?.likes.includes(new Types.ObjectId(id));
   const updatedPost = await Post.findByIdAndUpdate(

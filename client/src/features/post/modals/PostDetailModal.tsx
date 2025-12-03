@@ -13,10 +13,7 @@ const PostDetailModal: React.FC<PostModalProps> = ({ post }) => {
 
   return (
     <div className="bg-card max-w-3xl mx-auto mt-4 p-6 rounded-xl shadow-md border border-border flex flex-col gap-4 font-sans">
-      {/* Header */}
       <div className="flex gap-4 items-center">
-        {/* <PersonAvatar image={post.userId?.profileImage} view={false} /> */}
-
         <div>
           <p className="text-foreground font-semibold text-base">
             {post.userId?.userName || "Unknown User"}{" "}

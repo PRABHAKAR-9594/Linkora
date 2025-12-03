@@ -32,14 +32,6 @@ async function getLocation(ip: string) {
   const res = await fetch(`https://ipwho.is/${ip}`);
   const data = await res.json();
 
-  // return {
-  //   country: data.country || null,
-  //   region: data.region || null,
-  //   city: data.city || null,
-  //   lat: data.latitude || null,
-  //   lon: data.longitude || null,
-  // };
-
   return {
     country: data.country ?? null,
     region: data.region ?? null,

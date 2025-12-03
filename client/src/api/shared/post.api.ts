@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
-import { api, PostURL } from "../config";
+import { PostURL } from "../config";
+import { api } from "@/lib";
 
 export const PostAPI = {
   getUserPosts: async (userId: string, cursor?: string, limit = 30) => {

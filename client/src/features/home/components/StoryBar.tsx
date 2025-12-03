@@ -1,11 +1,11 @@
-import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Plus } from 'lucide-react';
-import avatar1 from "@/assets/Dummy/Images/Broken Playstation 3 Controller HD Wallpapers.jpg"
-import avatar3 from '@/assets/Dummy/Images/e1532520016e4f8d4b5f0fa770008724.jpeg';
-import avatar2 from '@/assets/Dummy/Images/Broken Playstation 3 Controller HD Wallpapers.jpg';
-import avatar4 from '@/assets/Dummy/Images/Kaneki Kenn Tokyo Ghoul.png';
+import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Plus } from "lucide-react";
+import avatar1 from "@/assets/Dummy/Images/Broken Playstation 3 Controller HD Wallpapers.jpg";
+import avatar3 from "@/assets/Dummy/Images/e1532520016e4f8d4b5f0fa770008724.jpeg";
+import avatar2 from "@/assets/Dummy/Images/Broken Playstation 3 Controller HD Wallpapers.jpg";
+import avatar4 from "@/assets/Dummy/Images/Kaneki Kenn Tokyo Ghoul.png";
 
 interface Friend {
   image: string;
@@ -14,18 +14,18 @@ interface Friend {
 }
 
 const friends: Friend[] = [
-  { image: avatar1, name: 'Emma Wilson', viewed: false },
-  { image: avatar2, name: 'Alex Chen', viewed: false },
-  { image: avatar3, name: 'Sofia Garcia', viewed: true },
-  { image: avatar4, name: 'Marcus Johnson', viewed: false },
-  { image: avatar1, name: 'Luna Park', viewed: true },
-  { image: avatar2, name: 'Ryan Foster', viewed: false },
-  { image: avatar3, name: 'Zara Khan', viewed: true },
-  { image: avatar4, name: 'Kai Anderson', viewed: false },
-  { image: avatar1, name: 'Maya Patel', viewed: false },
-  { image: avatar2, name: 'Diego Silva', viewed: true },
-  { image: avatar3, name: 'Aria Kim', viewed: false },
-  { image: avatar4, name: 'Noah Brooks', viewed: true },
+  { image: avatar1, name: "Emma Wilson", viewed: false },
+  { image: avatar2, name: "Alex Chen", viewed: false },
+  { image: avatar3, name: "Sofia Garcia", viewed: true },
+  { image: avatar4, name: "Marcus Johnson", viewed: false },
+  { image: avatar1, name: "Luna Park", viewed: true },
+  { image: avatar2, name: "Ryan Foster", viewed: false },
+  { image: avatar3, name: "Zara Khan", viewed: true },
+  { image: avatar4, name: "Kai Anderson", viewed: false },
+  { image: avatar1, name: "Maya Patel", viewed: false },
+  { image: avatar2, name: "Diego Silva", viewed: true },
+  { image: avatar3, name: "Aria Kim", viewed: false },
+  { image: avatar4, name: "Noah Brooks", viewed: true },
 ];
 
 const StoryBar: React.FC = () => {
@@ -34,7 +34,7 @@ const StoryBar: React.FC = () => {
       <div className="flex gap-4">
         {/* Add Story Button */}
         <div className="flex-shrink-0">
-          <button 
+          <button
             className="group relative flex flex-col items-center gap-2 transition-smooth hover:scale-105"
             aria-label="Add your story"
           >
@@ -63,15 +63,22 @@ const StoryBar: React.FC = () => {
                 className="group flex-shrink-0 flex flex-col items-center gap-2 transition-smooth hover:scale-105"
                 aria-label={`View ${friend.name}'s story`}
               >
-                <div className={`relative ${friend.viewed ? 'story-viewed' : 'story-ring'} rounded-full`}>
+                <div
+                  className={`relative ${
+                    friend.viewed ? "story-viewed" : "story-ring"
+                  } rounded-full`}
+                >
                   <Avatar className="h-16 w-16 ring-4 ring-background">
-                    <AvatarImage 
-                      src={friend.image} 
+                    <AvatarImage
+                      src={friend.image}
                       alt={friend.name}
                       className="object-cover"
                     />
                     <AvatarFallback className="bg-muted">
-                      {friend.name.split(' ').map(n => n[0]).join('')}
+                      {friend.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </AvatarFallback>
                   </Avatar>
                 </div>

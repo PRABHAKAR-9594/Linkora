@@ -29,6 +29,7 @@ const WebsiteView: React.FC = () => {
       >
         <img
           src={mobileView}
+          loading="lazy"
           alt="Mobile App Preview"
           className="mx-auto rounded-3xl shadow-2xl transition-transform duration-500 ease-in-out h-[480px] w-auto"
         />
@@ -58,6 +59,7 @@ const WebsiteView: React.FC = () => {
       >
         <img
           src={laptopView}
+          loading="lazy"
           alt="Desktop App Preview"
           className="mx-auto rounded-2xl shadow-2xl transition-transform duration-500 ease-in-out w-full max-w-[600px] h-auto"
         />

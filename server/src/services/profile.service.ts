@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
+import { Server } from "socket.io";
 import { FriendRequest } from "../models/friendRequest.model";
 import { User } from "../models/user.model";
 import { UpdateProfile } from "../types/profile.types";
@@ -11,6 +12,7 @@ import {
 } from "../utils/constants";
 import { validateUserExists } from "../utils/helper/dbValidators";
 import { redisClient } from "../config/redis.config";
+import { sendNotification } from "../socket/sendNotification.socket";
 
 export const handleUpdateProfile = async (
   data: UpdateProfile,
@@ -36,7 +38,7 @@ export const handleUpdateProfile = async (
     { $set: updatePayload },
     { new: true }
   ).select("-password");
-  
+
   await redisClient.del(`user:${userId}`);
 
   if (!updatedUser) {
@@ -71,7 +73,11 @@ export const handleGetFriends = async (userId: string) => {
   return user.friends;
 };
 
-export const handleSendFriendRequest = async (from: string, to: string) => {
+export const handleSendFriendRequest = async (
+  io: Server,
+  from: string,
+  to: string
+) => {
   if (from === to) {
     throw ApiError.BadRequest(FRIEND_MESSAGES.CANNOT_SELF_REQUEST);
   }
@@ -87,7 +93,20 @@ export const handleSendFriendRequest = async (from: string, to: string) => {
     throw ApiError.Conflict(FRIEND_MESSAGES.ALREADY_SENT);
   }
 
-  await FriendRequest.create({ from, to });
+  const request = await FriendRequest.create({ from, to });
+
+  // if (!request) {
+  //   throw ApiError.BadRequest("Something went wrong.");
+  // }
+
+  await sendNotification(io, {
+    userId: new Types.ObjectId(to),
+    type: "friend_request",
+    content: "You have a new friend request",
+    relatedId: request._id,
+    relatedModel: "friend_request",
+  });
+
   return FRIEND_MESSAGES.REQUEST_SENT;
 };
 

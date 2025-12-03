@@ -101,7 +101,7 @@ interface CommentItemProps {
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment, onReplyClick }) => {
   const { mutate: toggleLikeComment } = useToggleCommentLikeMutation();
-  const { mutate: toggleLikeReply } = useToggleReplyLikeMutation();
+  // const { mutate: toggleLikeReply } = useToggleReplyLikeMutation();
 
   const {
     isLiked: isCommentLiked,

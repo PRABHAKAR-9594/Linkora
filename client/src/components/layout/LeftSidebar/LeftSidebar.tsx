@@ -5,9 +5,9 @@ import {
   Users,
   Bell,
   Settings,
-  Video,
-  MessageSquare,
-  Image,
+  // Video,
+  // MessageSquare,
+  // Image,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -20,12 +20,12 @@ import { useLeftSidebar } from "./useLeftSidebar";
 const items = [
   { title: "Home", url: "/home", icon: Home },
   { title: "Explore", url: "/explore", icon: Search },
-  { title: "Chat", url: "/chat", icon: MessageSquare },
+  // { title: "Chat", url: "/chat", icon: MessageSquare },
   { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "Friends", url: "/friendList", icon: Users },
   { title: "Groups", url: "/groups", icon: Users },
-  { title: "Photos", url: "/photos", icon: Image },
-  { title: "Video", url: "/videos", icon: Video },
+  // { title: "Photos", url: "/photos", icon: Image },
+  // { title: "Video", url: "/videos", icon: Video },
   { title: "Profile", url: "/profile", icon: UserRoundCheck },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
@@ -47,12 +47,11 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
 
   const SidebarContent = () => (
     <>
-      {/* Collapse Toggle Button */}
       <Button
         variant="ghost"
         size="icon"
         onClick={toggleCollapse}
-        className="absolute top-4 right-3 rounded-full border bg-background shadow-md hover:bg-accent"
+        className="hidden sm:flex absolute top-4 right-3 rounded-full border bg-background shadow-md hover:bg-accent mr-2"
       >
         {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
       </Button>

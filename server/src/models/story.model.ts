@@ -8,12 +8,16 @@ const StorySchema = new Schema<IStory>({
     required: true,
   },
   mediaUrl: String,
-  views: [
+  viewUsers: [
     {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
   ],
+  viewCount : {
+    type : Number,
+    default : 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

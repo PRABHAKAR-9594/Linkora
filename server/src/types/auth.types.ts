@@ -5,10 +5,24 @@ export type JWTTokenPayload = {
   id: string;
   iat: number;
   exp: number;
+  sessionId: string;
+  tokenVersion: number;
+};
+
+export type JWTTVerificationokenPayload = {
+  id: string;
+  iat: number;
+  exp: number;
+};
+
+export type VerificationTokenPayload = {
+  id: Types.ObjectId;
 };
 
 export type TokenPayload = {
   id: Types.ObjectId;
+  sessionId: string;
+  tokenVersion: number;
 };
 
 export type RegisterUserInput = {

@@ -60,14 +60,15 @@ const Register: React.FC = () => {
             >
               <FormField
                 control={form.control}
-                name="userName"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Username</FormLabel>
+                    <FormLabel className="text-foreground">Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Choose a unique username"
+                        type="email"
+                        placeholder="Enter your email address"
                         className="h-11 bg-background border-input focus:border-primary focus:ring-primary"
                       />
                     </FormControl>
@@ -78,15 +79,14 @@ const Register: React.FC = () => {
 
               <FormField
                 control={form.control}
-                name="email"
+                name="userName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Email</FormLabel>
+                    <FormLabel className="text-foreground">Username</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        type="email"
-                        placeholder="Enter your email address"
+                        placeholder="Choose a unique username"
                         className="h-11 bg-background border-input focus:border-primary focus:ring-primary"
                       />
                     </FormControl>

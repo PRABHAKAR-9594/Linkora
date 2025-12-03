@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { TokenPayload } from "../../types/auth.types";
+import { TokenPayload, VerificationTokenPayload } from "../../types/auth.types";
 
-const JWT_VERIFICATION_SECRET = process.env.JWT_SECRET as string;
+const JWT_VERIFICATION_SECRET = process.env.JWT_VERIFICATION_SECRET as string;
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
 // ===========================
@@ -9,7 +9,7 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
 // ===========================
 export const ACCESS_EXPIRES_IN = "15m"; // 15 minutes
 export const REFRESH_EXPIRES_IN = "7d"; // 7 days
-export const VERIFICATION_EXPIRES_IN = "30m"; // 30 minutes
+export const VERIFICATION_EXPIRES_IN = "10m"; // 10 minutes
 
 // ===========================
 //  COOKIE CONFIGS
@@ -39,7 +39,7 @@ export const verificationCookieOptions = {
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
   path: "/",
-  maxAge: 30 * 60 * 1000, // 30 minutes
+  maxAge: 10 * 60 * 1000, // 10 minutes
 };
 
 // ===========================
@@ -55,7 +55,7 @@ export function generateRefreshToken(payload: TokenPayload) {
   });
 }
 
-export function generateVerificationToken(payload: TokenPayload) {
+export function generateVerificationToken(payload: VerificationTokenPayload) {
   return jwt.sign(payload, JWT_VERIFICATION_SECRET, {
     expiresIn: VERIFICATION_EXPIRES_IN,
   });

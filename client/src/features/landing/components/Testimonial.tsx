@@ -22,7 +22,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ img, name, username, body }) =>
     )}
   >
     <div className="flex items-center gap-3 mb-4">
-      <img src={img} alt={name} className="w-12 h-12 rounded-full object-cover" />
+      <img src={img} loading="lazy" alt={name} className="w-12 h-12 rounded-full object-cover" />
       <div className="flex flex-col">
         <figcaption className="text-sm font-semibold">{name}</figcaption>
         <span className="text-xs text-muted-foreground">{username}</span>

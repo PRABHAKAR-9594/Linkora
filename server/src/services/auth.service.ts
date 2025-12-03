@@ -18,6 +18,7 @@ import {
   DeviceMeta,
   RegisterUserInput,
   TokenPayload,
+  VerificationTokenPayload,
 } from "../types/auth.types";
 
 import {
@@ -49,8 +50,7 @@ export const registerNewUser = async ({
     profileImage,
   });
 
-  const tokenPayload: TokenPayload = { id: user._id };
-  const token = generateVerificationToken(tokenPayload);
+  const token = generateVerificationToken({ id: user._id });
 
   return { user, token };
 };
@@ -73,23 +73,27 @@ export const handleSendOtp = async (
 
 export const handleVerifyOtp = async (userId: string, otpNumber: number) => {
   const user = await User.findById(userId);
-
   if (!user) throw ApiError.NotFound(USER_MESSAGES.NOT_FOUND);
-  if (user.verified)
-    throw ApiError.Conflict(AUTH_MESSAGES.EMAIL_ALREADY_VERIFIED);
 
-  const otp = await Otp.findOne({ userId }).sort({ createdAt: -1 });
-  if (!otp || otp.otp !== otpNumber)
-    throw ApiError.Forbidden(AUTH_MESSAGES.WRONG_OTP);
+  if (user.verified) throw ApiError.Conflict(USER_MESSAGES.EMAIL_EXISTS);
+
+  const otpRecord = await Otp.findOne({ userId }).sort({ createdAt: -1 });
+  if (!otpRecord) throw ApiError.BadRequest(AUTH_MESSAGES.OTP_NOT_FOUND);
+
+  if (otpRecord.expiresAt < new Date()) {
+    await otpRecord.deleteOne();
+    throw ApiError.BadRequest(AUTH_MESSAGES.OTP_EXPIRED);
+  }
+
+  if (otpRecord.otp !== Number(otpNumber)) {
+    throw ApiError.BadRequest(AUTH_MESSAGES.WRONG_OTP);
+  }
 
   user.verified = true;
   await user.save();
+  await otpRecord.deleteOne();
 
-  const payload: TokenPayload = { id: user._id };
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload);
-
-  return { accessToken, refreshToken };
+  return { success: true, message: AUTH_MESSAGES.OTP_VERIFIED };
 };
 
 export const handleResendOtp = async (userId: string) => {
@@ -125,7 +129,11 @@ export const handleUserLogin = async (
     throw ApiError.Unauthorized(AUTH_MESSAGES.INVALID_PASSWORD);
 
   const sessionId = randomUUID();
-  const payload: TokenPayload = { id: user._id };
+  const payload: TokenPayload = {
+    id: user._id,
+    sessionId,
+    tokenVersion: user.tokenVersion,
+  };
 
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
@@ -134,7 +142,7 @@ export const handleUserLogin = async (
     refreshToken,
     process.env.JWT_REFRESH_SECRET!
   );
-
+  const userId = user._id;
   const tokenDoc = await RefreshTokenModel.create({
     userId: user._id,
     token: refreshToken,
@@ -149,70 +157,54 @@ export const handleUserLogin = async (
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
   });
 
+  const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+
   await redisClient.setEx(
     `session:${sessionId}`,
-    Math.floor((decoded.exp * 1000 - Date.now()) / 1000) > 0
-      ? Math.floor((decoded.exp * 1000 - Date.now()) / 1000)
-      : 60,
+    ttl,
     JSON.stringify({
       userId: user._id.toString(),
       tokenId: tokenDoc._id.toString(),
     })
   );
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, userId };
 };
 
 export async function verifyAndRotateRefreshToken(oldToken: string) {
   const secret = process.env.JWT_REFRESH_SECRET!;
-  let payload: any;
+  const payload = verifyToken(oldToken, secret) as TokenPayload;
 
-  try {
-    payload = verifyToken(oldToken, secret);
-  } catch {
-    throw ApiError.Unauthorized(AUTH_MESSAGES.INVALID_OR_EXPIRED_REFRESH_TOKEN);
-  }
+  const sessionData = await redisClient.get(`session:${payload.sessionId}`);
+  if (!sessionData)
+    throw ApiError.Unauthorized(AUTH_MESSAGES.SESSION_EXPIRED_DEVICE);
 
-  const tokenRecord = await RefreshTokenModel.findOne({
-    token: oldToken,
-    revoked: false,
-    expiresAt: { $gt: new Date() },
-  });
+  const newPayload = {
+    id: payload.id,
+    sessionId: payload.sessionId,
+    tokenVersion: payload.tokenVersion,
+  };
 
-  if (!tokenRecord) {
-    throw ApiError.Unauthorized(AUTH_MESSAGES.INVALID_OR_EXPIRED_REFRESH_TOKEN);
-  }
+  const newAccessToken = generateAccessToken(newPayload);
+  const newRefreshToken = generateRefreshToken(newPayload);
 
-  tokenRecord.revoked = true;
-  await tokenRecord.save();
+  const decoded = jwt.decode(newRefreshToken) as any;
+  const ttl = decoded.exp - Math.floor(Date.now() / 1000);
 
-  const newAccessToken = generateAccessToken({ id: payload.id });
-  const newRefreshToken = generateRefreshToken({ id: payload.id });
-
-  await RefreshTokenModel.create({
-    userId: payload.id,
-    token: newRefreshToken,
-    sessionId: tokenRecord.sessionId,
-    deviceName: tokenRecord.deviceName,
-    ipAddress: tokenRecord.ipAddress,
-    osInfo: tokenRecord.osInfo,
-    userAgent: tokenRecord.userAgent,
-    revoked: false,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  });
+  await redisClient.expire(`session:${payload.sessionId}`, ttl);
 
   return { newAccessToken, newRefreshToken };
 }
 
-export const handleLogout = async (userId: string) => {
-  const activeTokens = await RefreshTokenModel.find({ userId });
+export const handleLogout = async (userId: string, sessionId: string) => {
+  await RefreshTokenModel.updateOne(
+    { userId, sessionId, revoked: false },
+    { revoked: true }
+  );
 
-  for (const t of activeTokens) {
-    t.revoked = true;
-    await t.save();
-    await redisClient.del(`user:${userId}`);
-    await redisClient.del(`session:${t.sessionId}`);
-  }
+  await redisClient.del(`session:${sessionId}`);
+
+  await redisClient.del(`user:${userId}`);
 };
 
 export const handleSendPasswordResetEmail = async (email: string) => {
@@ -223,7 +215,7 @@ export const handleSendPasswordResetEmail = async (email: string) => {
   user.verificationToken = token;
   await user.save();
 
-  console.log("Password reset link:", token); // Replace with email
+  console.log("Password reset link:", token);
 };
 
 export const handleResetPassword = async (
@@ -245,8 +237,6 @@ export const handleResetPassword = async (
 export const getUserById = async (userId: string) => {
   const cached = await redisClient.get(`user:${userId}`);
   if (cached) return JSON.parse(cached);
-
-  // const user = await User.findById(userId).select("-password");
 
   const user = await User.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(userId) } },

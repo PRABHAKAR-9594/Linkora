@@ -32,7 +32,7 @@ const NotificationSchema = new Schema<INotification>({
 
   relatedModel: {
     type: String,
-    enum: ["Chat", "Call", "User", "Post"], // models that can be linked
+    enum: ["Chat", "Call", "friend_request", "User", "Post"], // models that can be linked
   },
 
   isRead: {
@@ -42,11 +42,12 @@ const NotificationSchema = new Schema<INotification>({
 
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: Date.now(),
   },
 
   expiresAt: {
     type: Date,
+    default: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
   },
 });
 

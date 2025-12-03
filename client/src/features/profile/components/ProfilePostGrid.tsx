@@ -117,7 +117,6 @@ const ProfilePostGrid = ({ posts, isOwner }: PostsSectionProps) => {
                 }
               />
 
-              {/* Show Menu only for post owner */}
               {isMyPost && isOwner && (
                 <div className="absolute top-2 right-2 z-10">
                   <button
@@ -161,7 +160,6 @@ const ProfilePostGrid = ({ posts, isOwner }: PostsSectionProps) => {
         })}
       </div>
 
-      {/* Post Modal */}
       {/* {selectedPost && <PostModal post={selectedPost} />} */}
     </div>
   );

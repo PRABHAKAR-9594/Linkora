@@ -6,31 +6,47 @@ import {
   getActiveSessions,
   revokeSessionById,
   logoutAllExceptCurrentService,
-  getCurrentSessionInfo,
 } from "../services/session.service";
+import { ApiError } from "../utils/apiResponseHandler/apiError";
+import { validateUserExists } from "../utils/helper/dbValidators";
+import {
+  accessTokenCookieOptions,
+  refreshTokenCookieOptions,
+} from "../utils/helper/generateVerifyJwtToken";
+import { SESSION_MESSAGES } from "../utils/constants";
 
 export const getSessions = asyncHandler(async (req: Request, res: Response) => {
   const sessions = await getActiveSessions(req.currentUser.id);
-  res.json(ApiResponse.success(sessions, "Active sessions retrieved."));
+  res.json(ApiResponse.success(sessions, SESSION_MESSAGES.SESSIONS_FETCHED));
 });
 
 export const deleteSession = asyncHandler(
   async (req: Request, res: Response) => {
     const { sessionId } = req.params;
     await revokeSessionById(req.currentUser.id, sessionId);
-    res.json(ApiResponse.success(null, "Session revoked successfully."));
+    res.json(ApiResponse.success(null, SESSION_MESSAGES.SESSION_REVOKED));
   }
 );
 
 export const logoutAllExceptCurrent = asyncHandler(
   async (req: Request, res: Response) => {
-    const currentToken = req.cookies.linkora_refresh_token;
-    const currentSession = await getCurrentSessionInfo(currentToken);
+    const currentSessionId = req.auth?.sessionId;
+    const { id } = req.currentUser;
+    
+    const user = await validateUserExists(id);
 
-    await logoutAllExceptCurrentService(
-      req.currentUser.id,
-      currentSession?.sessionId || ""
+    if (!currentSessionId) {
+      throw ApiError.BadRequest(SESSION_MESSAGES.SESSION_ID_MISSING);
+    }
+
+    const { accessToken, refreshToken } = await logoutAllExceptCurrentService(
+      currentSessionId,
+      user._id,
+      user.tokenVersion
     );
-    res.json(ApiResponse.success(null, "Logged out from all other devices."));
+    res
+      .cookie("linkora_access_token", accessToken, accessTokenCookieOptions)
+      .cookie("linkora_refresh_token", refreshToken, refreshTokenCookieOptions)
+      .json(ApiResponse.success(null, SESSION_MESSAGES.LOGGED_OUT_OTHER_DEVICES));
   }
 );

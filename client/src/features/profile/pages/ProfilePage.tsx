@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useProfileByUsernameQuery } from "../hooks/useProfile";
 import ProfileHeader from "../components/ProfileHeader";
 import About from "../components/About";
-import SavedMedia from "../components/SavedMedia";
+// import SavedMedia from "../components/SavedMedia";
 import CreatePost from "@/components/shared/CreatePost";
 
 const ProfilePage = () => {
@@ -11,9 +11,9 @@ const ProfilePage = () => {
 
   const { data: currentUserData, isLoading: loadingCurrent } =
     useCurrentUserQuery();
-  console.log("current user data :: ", currentUserData)
   const { data: searchedUserData, isLoading: loadingSearched } =
     useProfileByUsernameQuery(userName!);
+    
   const isOwnProfile =
     !userName || currentUserData?.userName === userName;
 
@@ -30,12 +30,12 @@ const ProfilePage = () => {
             <ProfileHeader user={user} isOwnProfile={isOwnProfile} />
           </div>
 
-          <div className="w-full lg:w-[30%] space-y-4">
+          <div className="hidden lg:block w-full lg:w-[30%] space-y-4">
             <About user={user} />
             {isOwnProfile && (
               <>
                 <CreatePost />
-                <SavedMedia />
+                {/* <SavedMedia /> */}
               </>
             )}
           </div>

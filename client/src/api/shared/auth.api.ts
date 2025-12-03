@@ -1,4 +1,5 @@
-import { api, AuthURL } from "../config";
+import {  AuthURL } from "../config";
+import { api } from "@/lib";
 
 export const AuthAPI = {
   getCurrentUser: async () => {

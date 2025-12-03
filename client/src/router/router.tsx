@@ -12,9 +12,9 @@ import { LandingPage } from "@/features/landing";
 import { HomePage } from "@/features/home";
 import { ProfilePage } from "@/features/profile";
 import SettingsPage from "@/features/settings/pages/SettingPage";
-import ChatUI from "@/features/chat/components/Chatui";
 import NotFound from "@/components/feedback/NotFound";
 import { ExplorePage } from "@/features/explore";
+import NotificationPage from "@/features/notifications/pages/NotificationPage";
 
 const router = createBrowserRouter([
   {
@@ -43,8 +43,8 @@ const router = createBrowserRouter([
       // added question mark ( ? ) at the end of the userName
       // so we can access both self profile and other users profile
       { path: "/profile/:userName?", element: <ProfilePage /> },
+      { path : "/notifications", element : <NotificationPage/>},
       { path: "/settings", element: <SettingsPage /> },
-      { path: "/chat", element: <ChatUI /> },
       { path: "/explore", element: <ExplorePage /> },
     ],
   },

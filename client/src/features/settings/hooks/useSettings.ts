@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { EditProfilePayload } from "../validation";
 import { toast } from "sonner";
 import { handleAxiosError } from "@/utils";
-import { api } from "@/api/config";
+import { api } from "@/lib";
 
 export const useUpdateProfileMutation = () => {
   const qc = useQueryClient();
@@ -51,6 +51,7 @@ export const useLogOutAllSessions = () => {
     mutationFn: () => api.delete("/sessions/logout-all-except-current"),
     onSuccess: () => {
       toast.success("Logged Out from all sessions.");
+      qc.invalidateQueries({ queryKey: ["sessions"] });
     },
   });
 };

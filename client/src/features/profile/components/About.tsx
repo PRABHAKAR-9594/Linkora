@@ -2,9 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Mail } from "lucide-react";
 
 const About: React.FC<{ user: any }> = ({ user }) => {
-  // const { data, isLoading } = useCurrentUserQuery();
-  // const user = data?.data;
-
   return (
     <Card className="border-border shadow-lg">
       <CardContent className="p-4">

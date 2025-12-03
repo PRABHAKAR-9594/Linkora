@@ -1,10 +1,13 @@
 import axios, { AxiosError } from "axios";
+import queryClient from "./queryClient";
+import { socket } from "./socket";
 import { toast } from "sonner";
 
 const BACKEND_URL =
   import.meta.env.MODE === "production"
     ? import.meta.env.VITE_BACKEND_URL
-    : "http://192.168.0.101:4000";
+    : // : "http://192.168.0.100:4000";
+      "http://localhost:4000";
 
 export const api = axios.create({
   withCredentials: true,
@@ -20,6 +23,8 @@ async function logout() {
     await api.post("/auth/logout", {}, { withCredentials: true });
   } catch (_) {}
 
+  queryClient.clear();
+  socket.disconnect();
   localStorage.clear();
   window.location.href = "/auth/login";
 }
@@ -70,7 +75,7 @@ api.interceptors.response.use(
     }
 
     // 401 Unauthorized → Refresh token attempt
-    if (status === 401 && !original._retry) {
+    if (status === 401 && !original._retry && !isLoggingOut) {
       console.log("Refreshing...");
       original._retry = true;
 
@@ -83,7 +88,6 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("Refreshing refresh token");
         await api.post("/auth/refresh", {}, { withCredentials: true });
 
         isRefreshing = false;

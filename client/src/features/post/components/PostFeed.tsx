@@ -9,7 +9,6 @@ const PostFeed = () => {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Set up infinite scroll observer
   useEffect(() => {
     if (!bottomRef.current || !hasNextPage) return;
 
@@ -23,7 +22,6 @@ const PostFeed = () => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage]);
 
-  // Show initial loading
   if (isLoading) {
     return (
       <div className="text-center py-6 text-muted-foreground">
@@ -33,36 +31,23 @@ const PostFeed = () => {
     );
   }
 
-  // Error or no data
-  if (status === "error") {
-    return (
-      <div className="text-center text-red-500 py-6">
-        Failed to load posts. Try again.
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      {data?.pages.map((page, pageIndex: any) =>
+      {data?.pages.map((page) =>
         page.posts.map((post: any) => <PostLayout key={post._id} post={post} />)
       )}
 
-      {/* Fetching next posts */}
       {isFetchingNextPage && (
         <div className="text-center py-4 text-muted-foreground">
           <Loader2 className="animate-spin mx-auto h-6 w-6" />
           <p>Loading more...</p>
         </div>
       )}
-
-      {/* Observer trigger */}
       {hasNextPage && <div ref={bottomRef} className="h-10" />}
 
-      {/* No more posts */}
       {!hasNextPage && (
         <p className="text-center py-4 text-muted-foreground">
-          You’ve reached the end 🎉
+          You’ve reached the end.
         </p>
       )}
     </div>

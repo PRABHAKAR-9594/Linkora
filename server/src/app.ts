@@ -11,10 +11,12 @@ import errorMiddleware from "./middlewares/errorHandler.middleware";
 
 import authRoute from "./routes/auth.route";
 import sessionRoute from "./routes/session.route";
+import notificationRoute from "./routes/notification.route";
 import mediaRoute from "./routes/media.route";
 import profileRoute from "./routes/profile.route";
 import postRoute from "./routes/post.route";
 import commentRoute from "./routes/comment.route";
+import storyRoute from "./routes/story.route";
 
 export const app: express.Application = express();
 
@@ -40,7 +42,8 @@ const allowedOrigins: string[] =
     ? [process.env.Frontend_Production_url]
     : [
         "http://localhost:5173",
-        "http://192.168.0.101:5173", // Local network access
+        "http://127.0.0.1:5173",
+        "http://192.168.0.100:5173", // Local network access
       ];
 
 const corsOptions: cors.CorsOptions = {
@@ -51,6 +54,7 @@ const corsOptions: cors.CorsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
 };
 
@@ -63,22 +67,25 @@ app.use(
         defaultSrc: [
           "'self'",
           "http://localhost:5173",
-          "http://192.168.0.101:5173",
+          "http://127.0.0.1:5173",
+          "http://192.168.0.100:5173",
         ],
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
           "http://localhost:5173",
-          "http://192.168.0.101:5173",
+          "http://127.0.0.1:5173",
+          "http://192.168.0.100:5173",
         ], // Allow Vite's HMR
         styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles (CSS-in-JS)
         imgSrc: ["'self'", "data:"], // Allow base64 images
         connectSrc: [
           "'self'",
           "http://localhost:4000",
-          "http://192.168.0.101:4000",
+          "http://192.168.0.100:4000",
           "ws://localhost:5173",
-          "ws://192.168.0.101:5173",
+          "ws://127.0.0.1:5173",
+          "ws://192.168.0.100:5173",
         ], // For API + Vite HMR
       },
     },
@@ -97,10 +104,12 @@ app.use(mongoSanitize());
 // Routes will be here
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/sessions", sessionRoute);
+app.use("/api/v1/notification", notificationRoute);
 app.use("/api/v1/profile", profileRoute);
 app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/comment", commentRoute);
+app.use("/api/v1/story",storyRoute);
 // ===============================================
 
 app.use(errorMiddleware);

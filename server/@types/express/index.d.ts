@@ -1,13 +1,16 @@
-export interface IUser{
-  id : string;
-  iat : number;
-  exp : number;
+export interface IAuthUserPayload {
+  id: string;
+  iat: number;
+  exp: number;
 }
 
 declare global {
   namespace Express {
     interface Request {
-      currentUser: IUser;
+      currentUser: IAuthUserPayload;
+      auth?: {
+        sessionId: string;
+      };
     }
   }
 }

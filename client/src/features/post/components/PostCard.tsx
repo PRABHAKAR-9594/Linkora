@@ -3,6 +3,7 @@ import { formatDate } from "@/utils";
 import { PersonAvatar } from "@/components/layout";
 import PostActionsBar from "./PostAction";
 import Media from "./Media";
+import { formatTimeAgo } from "@/utils/formatDate";
 
 interface PostProps {
   post: any;
@@ -29,7 +30,7 @@ const PostCard: React.FC<PostProps> = ({ post }) => {
           <p className="text-foreground font-semibold text-sm sm:text-base truncate">
             {post?.userId?.userName || "Unknown User"}{" "}
             <span className="text-muted-foreground font-normal text-xs sm:text-sm">
-              • {post?.createdAt ? formatDate(post.createdAt) : "Recently"}
+              • {post?.createdAt ? formatTimeAgo(post.createdAt) : "Recently"}
             </span>
           </p>
           <p className="text-muted-foreground text-xs sm:text-sm truncate">

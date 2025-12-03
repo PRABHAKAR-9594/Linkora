@@ -21,7 +21,7 @@ router.post("/logout", authenticateUser, logoutUser);
 router.post("/refresh", refreshToken);
 
 router.post("/verify-otp", verifyAuth, verifyOtp);
-router.post("/resend-otp", verifyAuth, resendOtp);
+router.get("/resend-otp", verifyAuth, resendOtp);
 
 router.post("/send-password-reset-email", sendPasswordResetEmail);
 router.patch("/reset-password", resetPassword);

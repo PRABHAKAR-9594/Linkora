@@ -21,15 +21,29 @@ import {
 import { Loader2, ShieldCheck } from "lucide-react";
 
 import { useVerifyOtp, useResendOtp } from "../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 const VerifyOtp: React.FC = () => {
-  const { mutate: verifyOtp, isPending: isVerifying } = useVerifyOtp();
-  const { mutate: resendOtp, isPending: isResending } = useResendOtp();
+  const { mutate: verifyOtp, isPending: verifying } = useVerifyOtp();
+  const { mutate: resendOtp, isPending: resending } = useResendOtp();
 
   const form = useForm<VerifyOtpPayload>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: { otp: "" },
   });
+
+  const [timer, setTimer] = useState(30);
+
+  useEffect(() => {
+    if (timer === 0) return;
+    const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleResend = () => {
+    resendOtp();
+    setTimer(30);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-background to-muted px-4">
@@ -104,12 +118,10 @@ const VerifyOtp: React.FC = () => {
               <Button
                 type="submit"
                 className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20"
-                disabled={form.watch("otp").length !== 6 || isVerifying}
+                disabled={form.watch("otp").length !== 6 || verifying}
               >
-                {isVerifying && (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                )}
-                {isVerifying ? "Verifying..." : "Verify Email"}
+                {verifying && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                {verifying ? "Verifying..." : "Verify Email"}
               </Button>
             </form>
           </Form>
@@ -118,16 +130,21 @@ const VerifyOtp: React.FC = () => {
             <p className="text-sm text-muted-foreground mb-3">
               Didn't receive the code?
             </p>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => resendOtp()}
-              disabled={isResending}
-              className="w-full border-border hover:bg-accent"
-            >
-              {isResending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-              {isResending ? "Sending..." : "Resend OTP"}
-            </Button>
+            <div className="text-center text-sm text-muted-foreground">
+              {timer > 0 ? (
+                <p>
+                  Resend OTP in <span className="font-semibold">{timer}s</span>
+                </p>
+              ) : (
+                <Button
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20"
+                >
+                  {resending ? "Resending OTP..." : "Resend OTP"}
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

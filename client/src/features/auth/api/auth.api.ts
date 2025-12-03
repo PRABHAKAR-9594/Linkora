@@ -1,4 +1,6 @@
-import { api, AuthURL } from "@/api/config";
+import { api } from "@/lib";
+import { AuthURL } from "@/api/config";
+
 import type {
   ForgotPasswordPayload,
   LoginPayload,
@@ -36,14 +38,4 @@ export const AuthAPI = {
     const res = await api.get(AuthURL.resendOtp);
     return res.data;
   },
-
-  // getCurrentUser: async () => {
-  //   const res = await api.get(AuthURL.me);
-  //   return res.data;
-  // },
-
-  // logout: async () => {
-  //   const res = await api.post(AuthURL.logout);
-  //   return res.data;
-  // },
 };

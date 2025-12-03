@@ -1,7 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { Request, Response } from "express";
 
-import { COMMON_MESSAGES, HTTP_STATUS } from "../utils/constants";
+import { COMMENT_MESSAGES, COMMON_MESSAGES, HTTP_STATUS } from "../utils/constants";
 import { ApiResponse } from "../utils/apiResponseHandler/apiResponse";
 
 import {
@@ -30,7 +30,7 @@ export const createComment = asyncHandler(
 
     return res
       .status(HTTP_STATUS.OK)
-      .json(ApiResponse.created({ updatedPost, comment }, "Created comment"));
+      .json(ApiResponse.created({ updatedPost, comment }, COMMENT_MESSAGES.COMMENT_CREATED));
   }
 );
 
@@ -50,7 +50,7 @@ export const createCommentReply = asyncHandler(
 
     return res
       .status(HTTP_STATUS.OK)
-      .json(ApiResponse.created({ comment, reply }, "Created sub comment"));
+      .json(ApiResponse.created({ comment, reply }, COMMENT_MESSAGES.SUB_COMMENT_CREATED));
   }
 );
 
@@ -64,7 +64,7 @@ export const toggleCommentLike = asyncHandler(
 
     return res
       .status(HTTP_STATUS.OK)
-      .json(ApiResponse.success("comment like toggled"));
+      .json(ApiResponse.success(COMMENT_MESSAGES.COMMENT_LIKE_TOGGLED));
   }
 );
 
@@ -78,7 +78,7 @@ export const toggleReplyLike = asyncHandler(
 
     return res
       .status(HTTP_STATUS.OK)
-      .json(ApiResponse.success(`Reply like toggled.`));
+      .json(ApiResponse.success(COMMENT_MESSAGES.REPLY_LIKE_TOGGLED));
   }
 );
 
@@ -91,6 +91,6 @@ export const getCommentsAndReply = asyncHandler(
 
     return res
       .status(HTTP_STATUS.OK)
-      .json(ApiResponse.success(comments, "comment of posts"));
+      .json(ApiResponse.success(comments,  COMMENT_MESSAGES.COMMENT_LIST));
   }
 );

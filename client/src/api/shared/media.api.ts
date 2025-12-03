@@ -5,7 +5,7 @@ import type {
 } from "@/hooks/api/types";
 import type { AxiosResponse } from "axios";
 import { MediaURL } from "@/api/config";
-import { api } from "@/api/config";
+import { api } from "@/lib";
 
 async function getSignature(): Promise<CloudinarySignatureResponse> {
   const { data }: AxiosResponse = await api.get(MediaURL.signature);

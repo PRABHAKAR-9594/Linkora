@@ -32,8 +32,7 @@ import { useCreatePostMutation } from "../hooks/usePost";
 const PostEditorModal = () => {
   const { isOpen } = useSelector((state: any) => state.postModal);
   const dispatch = useDispatch();
-  const { data } = useCurrentUserQuery();
-  const user = data?.data;
+  const { data: user } = useCurrentUserQuery();
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -98,7 +97,7 @@ const PostEditorModal = () => {
                   <p className="font-semibold">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <p className="font-semibold">@{user?.userName}</p>
+                  <p className="font-semibold text-primary/80">@{user?.userName}</p>
                 </div>
               </div>
 

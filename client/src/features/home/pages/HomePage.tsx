@@ -1,6 +1,6 @@
-import StoryBar from "../components/StoryBar";
 import CreatePost from "@/components/shared/CreatePost";
 import PostFeed from "@/features/post/components/PostFeed";
+import StoryBar from "../components/StoryBar";
 
 const HomePage: React.FC = () => {
   return (

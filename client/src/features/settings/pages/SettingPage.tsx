@@ -23,7 +23,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="notifications">
-          {/* <NotificationSettings /> */}
+          {/* <Notifications /> */}
         </TabsContent>
 
         <TabsContent value="delete">

@@ -11,6 +11,7 @@ export interface IUser extends Document {
   dob: Date;
   verified: boolean;
   accountType: "Admin" | "User";
+  tokenVersion: number;
   verificationToken?: string;
   verificationExpires: Date;
   profileImage: string;
@@ -59,7 +60,8 @@ export interface IMedia extends Document {
 export interface IStory extends Document {
   userId: Types.ObjectId;
   mediaUrl: string;
-  views: Types.ObjectId[];
+  viewUsers: Types.ObjectId[];
+  viewCount : Number;
   createdAt: Date;
 }
 
@@ -123,6 +125,7 @@ export interface IGroup extends Document {
 }
 
 export interface IFriendRequest extends Document {
+  _id: Types.ObjectId;
   from: Types.ObjectId;
   to: Types.ObjectId;
   status: "pending" | "accepted" | "rejected";

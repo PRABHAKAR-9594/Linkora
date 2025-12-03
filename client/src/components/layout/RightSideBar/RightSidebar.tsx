@@ -1,4 +1,3 @@
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -74,7 +73,10 @@ export default function RightSideBar() {
                     className="flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-accent transition-colors"
                   >
                     <Avatar className="h-10 w-10 ring-2 ring-border">
-                      <AvatarImage src={c.profileImage} className="object-cover" />
+                      <AvatarImage
+                        src={c.profileImage}
+                        className="object-cover"
+                      />
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
                         {c.firstName.charAt(0)}
                       </AvatarFallback>
@@ -102,7 +104,7 @@ export default function RightSideBar() {
                     Groups
                   </h3>
 
-                  {groups?.map((g : any, i : any) => (
+                  {groups?.map((g: any, i: any) => (
                     <div
                       key={i}
                       className="flex items-center gap-3 p-2 cursor-pointer hover:bg-accent rounded-xl transition-colors"

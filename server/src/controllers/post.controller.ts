@@ -93,5 +93,5 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
 
   return res
     .status(HTTP_STATUS.OK)
-    .json(ApiResponse.success(result, "Posts fetched successfully."));
+    .json(ApiResponse.success(result, POST_MESSAGES.FETCH_SUCCESS));
 });

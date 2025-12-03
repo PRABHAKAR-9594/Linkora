@@ -12,14 +12,11 @@ export const useCloudinaryUpload = () => {
       saveToDB?: boolean;
     }): Promise<UploadResult> => {
       const sig = await MediaAPI.getSignature();
-      console.log("file :: ", file ,"\nsig :: ", sig)
       const uploaded = await MediaAPI.uploadToCloudinary(file, sig);
-      console.log("uploaded info :: ", uploaded)
       if (saveToDB) {
         const media = await MediaAPI.saveMediaInDB(uploaded);
         return { uploaded, media };
       }
-
       return { uploaded };
     },
   });

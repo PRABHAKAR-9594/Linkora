@@ -30,7 +30,6 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
         onDragStart={(e) => e.preventDefault()}
       />
 
-      {/* Play/Pause Button - centered */}
       <button
         onClick={togglePlay}
         className="absolute bottom-3 right-3 bg-black/60 text-white px-3 py-1 rounded-md text-sm hover:bg-black/80 transition"

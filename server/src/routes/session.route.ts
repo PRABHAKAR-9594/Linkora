@@ -10,7 +10,7 @@ const router = Router();
 
 router.get("/", authenticateUser, getSessions);
 router.delete("/:sessionId", authenticateUser, deleteSession);
-router.post(
+router.delete(
   "/logout-all-except-current",
   authenticateUser,
   logoutAllExceptCurrent

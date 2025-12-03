@@ -13,7 +13,6 @@ export const useUpdateProfileImageMutation = () => {
       console.log("invalid query");
       qc.invalidateQueries({ queryKey: ["currentUser"] });
       console.log("query invalidated successfully.");
-      // qc.refetchQueries({ queryKey: ["currentUser"], type: "active" });
     },
     onError: handleAxiosError,
   });

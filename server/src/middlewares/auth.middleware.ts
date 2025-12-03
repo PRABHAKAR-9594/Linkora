@@ -4,33 +4,85 @@ import dotenv from "dotenv";
 import { ApiError } from "../utils/apiResponseHandler/apiError";
 import { AUTH_MESSAGES, HTTP_STATUS } from "../utils/constants";
 import asyncHandler from "./asyncHandler.middleware";
-import { JWTTokenPayload } from "../types/auth.types";
+import {
+  JWTTokenPayload,
+  JWTTVerificationokenPayload,
+} from "../types/auth.types";
+import { validateUserExists } from "../utils/helper/dbValidators";
+import { redisClient } from "../config/redis.config";
 
 dotenv.config();
 
-const secret = process.env.JWT_ACCESS_SECRET as string;
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
 
-const verifyTokenFromCookie = (cookieName: string) =>
-  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies?.[cookieName];
+export const authenticateUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies?.linkora_access_token;
 
     if (!token) {
-      throw new ApiError( HTTP_STATUS.UNAUTHORIZED,AUTH_MESSAGES.MISSING_TOKEN);
+      throw ApiError.Unauthorized(AUTH_MESSAGES.MISSING_TOKEN);
     }
 
-    try {
-      const decoded = jwt.verify(token, secret) as JWTTokenPayload;
+    const decoded = jwt.verify(token, JWT_ACCESS_SECRET) as JWTTokenPayload;
 
-      if (!decoded?.id) {
-        throw new ApiError(HTTP_STATUS.UNAUTHORIZED,AUTH_MESSAGES.INVALID_TOKEN);
-      }
+    const { id: userId, sessionId, tokenVersion } = decoded;
 
-      req.currentUser = decoded;
-      return next();
-    } catch (err) {
-      throw new ApiError( HTTP_STATUS.UNAUTHORIZED,AUTH_MESSAGES.INVALID_OR_EXPIRED_TOKEN);
+    if (!userId || !sessionId) {
+      throw ApiError.Unauthorized(AUTH_MESSAGES.INVALID_TOKEN_PAYLOAD);
     }
-  });
 
-export const verifyAuth = verifyTokenFromCookie("verification_token"); // For verification stage
-export const authenticateUser = verifyTokenFromCookie("linkora_access_token"); // For protected routes
+    const user = await validateUserExists(userId.toString());
+
+    if (user.tokenVersion !== tokenVersion) {
+      throw ApiError.Unauthorized(AUTH_MESSAGES.SESSION_EXPIRED_GLOBAL, {
+        clearCookies: true,
+      });
+    }
+
+    const sessionData = await redisClient.get(`session:${sessionId}`);
+    if (!sessionData) {
+      throw ApiError.Unauthorized(AUTH_MESSAGES.SESSION_EXPIRED_DEVICE, {
+        clearCookies: true,
+      });
+    }
+    
+    req.currentUser = {
+      id: decoded.id,
+      iat: decoded.iat,
+      exp: decoded.exp,
+    };
+ 
+    req.auth = {
+      sessionId: sessionId,
+    };
+
+    next();
+  }
+);
+
+const JWT_VERIFICATION_SECRET = process.env.JWT_VERIFICATION_SECRET as string;
+
+export const verifyAuth = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies?.verification_token;
+
+    if (!token) {
+      throw ApiError.Unauthorized(AUTH_MESSAGES.MISSING_TOKEN);
+    }
+
+    // Check the JWTTokenPayload cause an error or not while verification in decoded
+    const decoded = jwt.verify(
+      token,
+      JWT_VERIFICATION_SECRET
+    ) as JWTTVerificationokenPayload;
+
+    if (!decoded?.id) {
+      throw ApiError.Unauthorized(AUTH_MESSAGES.INVALID_TOKEN_PAYLOAD);
+    }
+    const user = await validateUserExists(decoded.id.toString());
+
+    req.currentUser = decoded;
+
+    next();
+  }
+);

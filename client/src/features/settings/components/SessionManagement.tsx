@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import { LogOut, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +6,10 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import {
   useFetchSessions,
-  useLogOutAllSessions,
+  // useLogOutAllSessions,
   useSessionLogOutMutation,
 } from "../hooks/useSettings";
-import { formatDateAndTime } from "@/utils/formatDate";
+import {  formatTimeAgo } from "@/utils/formatDate";
 import LoaderScreen from "@/components/feedback/LoaderScreen";
 
 interface Location {
@@ -40,8 +38,8 @@ const SessionManagement: React.FC = () => {
 
   const { mutate: deleteSession, isPending: deleteSessionPending } =
     useSessionLogOutMutation();
-  const { mutate: deleteAllSessions, isPending: deleteAllSessionsPending } =
-    useLogOutAllSessions();
+  // const { mutate: deleteAllSessions, isPending: deleteAllSessionsPending } =
+  //   useLogOutAllSessions();
   if (isLoading) {
     return <LoaderScreen message="Retrieving session, please wait..." />;
   }
@@ -52,7 +50,7 @@ const SessionManagement: React.FC = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold">Active Sessions</h1>
 
-          <div className="flex items-center gap-3 text-primary/80">
+          {/* <div className="flex items-center gap-3 text-primary/80">
             <p className="font-medium">Logout all</p>
 
             <Button
@@ -70,7 +68,7 @@ const SessionManagement: React.FC = () => {
                 <LogOut className="w-5 h-5" />
               )}
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {sessions.map((session: Session) => (
@@ -97,7 +95,7 @@ const SessionManagement: React.FC = () => {
                   <Separator className="my-2" />
                   <p>
                     <strong>Login Time:</strong>{" "}
-                    {formatDateAndTime(session.createdAt)}
+                    {formatTimeAgo(session.createdAt)}
                   </p>
                   <p>
                     <strong>OS:</strong> {session.osInfo}

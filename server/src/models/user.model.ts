@@ -42,6 +42,10 @@ const userSchema = new Schema<IUser>(
       default: false,
       select: false,
     },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
     verificationToken: {
       type: String,
       select: false,
@@ -49,7 +53,7 @@ const userSchema = new Schema<IUser>(
     // To delete the user profile from table
     verificationExpires: {
       type: Date,
-      default: () => new Date(Date.now() + 1 * 60 * 1000), // 30 minutes
+      default: () => new Date(Date.now() + 10 * 60 * 1000), // 30 minutes
       select: false,
     },
     profileImage: String,
@@ -81,7 +85,7 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-//Delete this document after the account is not verified for past 24hours using verificationExpires
+//Delete this document after the account is not verified for past 30minutes using verificationExpires
 userSchema.index(
   { verificationExpires: 1 },
   { expireAfterSeconds: 0, partialFilterExpression: { verified: false } }

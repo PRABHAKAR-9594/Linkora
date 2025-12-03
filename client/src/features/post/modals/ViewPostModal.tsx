@@ -47,7 +47,6 @@ const ViewPostModal: React.FC = () => {
 
         {!isMobile && (
           <div className="w-full md:w-[40%] flex flex-col rounded-xl border bg-white shadow-sm overflow-hidden">
-            {/* Header */}
             <div className="flex items-center gap-4 p-4 border-b">
               <PersonAvatar image={post?.userId?.profileImage} view={false} />
               <div className="min-w-0">
@@ -64,14 +63,12 @@ const ViewPostModal: React.FC = () => {
               </div>
             </div>
 
-            {/* Comments Section */}
             <div className="flex-1 p-4 overflow-y-auto">
               <CommentLayout postId={post._id} />
             </div>
           </div>
         )}
 
-        {/* Mobile Bottom Sheet */}
         {isMobile && (
           <AnimatePresence>
             <motion.div
@@ -81,7 +78,6 @@ const ViewPostModal: React.FC = () => {
               transition={{ type: "tween", duration: 0.25 }}
               className="absolute bottom-0 left-0 w-full h-[85vh] bg-zinc-800 rounded-t-xl shadow-xl flex flex-col"
             >
-              {/* Drag Handle */}
               <motion.div
                 drag="y"
                 dragConstraints={{ top: 0, bottom: 300 }}
@@ -94,7 +90,6 @@ const ViewPostModal: React.FC = () => {
                 <div className="w-12 h-1.5 bg-gray-500 rounded-full"></div>
               </motion.div>
 
-              {/* Comment List (Scrollable) */}
               <div
                 ref={scrollRef}
                 onScroll={handleScrollToClose}
@@ -103,7 +98,6 @@ const ViewPostModal: React.FC = () => {
                 <CommentLayout postId={post._id} />
               </div>
 
-              {/* Comment Input (Fixed Bottom) */}
               <div className="border-t border-gray-700">
                 <CommentInput postId={post._id} />
               </div>

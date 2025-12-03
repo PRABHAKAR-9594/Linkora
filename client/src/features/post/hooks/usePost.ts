@@ -1,4 +1,4 @@
-import { api } from "@/api/config";
+import { api } from "@/lib";
 import { PostAPI } from "@/api/shared/post.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useInfiniteQuery } from "@tanstack/react-query";

@@ -8,6 +8,7 @@ import {
   AUTH_MESSAGES,
   COMMON_MESSAGES,
   USER_MESSAGES,
+  SESSION_MESSAGES,
 } from "../utils/constants";
 import {
   registerNewUser,
@@ -59,19 +60,17 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   if (!otp) throw ApiError.BadRequest(COMMON_MESSAGES.REQUIRED_FIELDS);
 
   const { id } = req.currentUser;
-  const { accessToken, refreshToken } = await handleVerifyOtp(id, otp);
 
-  res
-    .cookie("linkora_access_token", accessToken, accessTokenCookieOptions)
-    .cookie("linkora_refresh_token", refreshToken, refreshTokenCookieOptions)
-    .status(200)
-    .json(ApiResponse.success(null, AUTH_MESSAGES.OTP_VERIFIED));
+  await handleVerifyOtp(id, otp);
+
+  res.status(200).json(ApiResponse.success(null, AUTH_MESSAGES.OTP_VERIFIED));
 });
 
 export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.currentUser;
 
   await handleResendOtp(id);
+
   res.status(200).json(ApiResponse.success(null, AUTH_MESSAGES.OTP_RESENT));
 });
 
@@ -83,7 +82,7 @@ export const loginUser = [
     if (!errors.isEmpty()) throw ApiError.BadRequest(errors.array()[0].msg);
 
     const { usernameOrEmail, password, meta } = req.body;
-    const { accessToken, refreshToken } = await handleUserLogin(
+    const { userId, accessToken, refreshToken } = await handleUserLogin(
       usernameOrEmail,
       password,
       meta
@@ -93,7 +92,7 @@ export const loginUser = [
       .cookie("linkora_access_token", accessToken, accessTokenCookieOptions)
       .cookie("linkora_refresh_token", refreshToken, refreshTokenCookieOptions)
       .status(200)
-      .json(ApiResponse.success(null, AUTH_MESSAGES.LOGIN_SUCCESS));
+      .json(ApiResponse.success(AUTH_MESSAGES.LOGIN_SUCCESS));
   }),
 ];
 
@@ -118,8 +117,14 @@ export const refreshToken = asyncHandler(
 );
 
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.currentUser;
-  await handleLogout(id);
+  const userId = req.currentUser.id;
+  const sessionId = req.auth?.sessionId;
+
+  if (!sessionId) {
+    throw ApiError.BadRequest(SESSION_MESSAGES.SESSION_ID_MISSING);
+  }
+
+  await handleLogout(userId, sessionId);
 
   res.clearCookie("linkora_access_token");
   res.clearCookie("linkora_refresh_token");
